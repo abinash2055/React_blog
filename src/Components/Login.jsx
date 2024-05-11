@@ -1,7 +1,24 @@
+import { useState } from "react";
 import React from "react";
-import { Link } from "react-router-dom";
+import axios from "../api/axios";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = ueState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    try {
+      await axios.post("/login", { email, password });
+      setEmail("");
+      setPassword("");
+      navigate("/");
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <section className="bg-[#F4F7FF] py-20 lg-:py-[120px]">
       <div className="container mx-auto">

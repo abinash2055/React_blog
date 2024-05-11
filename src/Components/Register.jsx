@@ -1,7 +1,34 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import axios from "../api/axios";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [password_confirmation, setPasswordConfirmation] = useState("");
+  const navigate = useNavigate();
+
+  const handleRegister = async (event) => {
+    event.preventDefault();
+    try {
+      await axios.post("/register", {
+        name,
+        email,
+        password,
+        password_confirmation,
+      });
+      setEmail("");
+      setPassword("");
+      setName("");
+      setPasswordConfirmation("");
+      navigate("/");
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <section className="bg-[#F4F7FF] py-20 lg-:py-[120px]">
       <div className="container mx-auto">
@@ -11,10 +38,12 @@ const Register = () => {
               <div className="mb-10 text-center md:mb-16">
                 Personal Signature
               </div>
-              <form>
+              <form onSubmit={handleRegister}>
                 <div className="mb-4">
                   <input
                     type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     placeholder="Name"
                     className="border-[#E9EDF4] w-full rounded-md border bg-[#ECFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
                   />
@@ -25,6 +54,8 @@ const Register = () => {
                 <div className="mb-4">
                   <input
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
                     className="border-[#E9EDF4] w-full rounded-md border bg-[#ECFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
                   />
@@ -35,6 +66,8 @@ const Register = () => {
                 <div className="mb-4">
                   <input
                     type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
                     className="border-[#E9EDF4] w-full rounded-md boder bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
                   />
@@ -45,6 +78,8 @@ const Register = () => {
                 <div className="mb-4">
                   <input
                     type="password"
+                    value={password_confirmation}
+                    onChange={(e) => setPasswordConfirmation(e.target.value)}
                     placeholder="Password Confirmation"
                     className="border-[#E9EDF4] w-full rounded-md boder bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
                   />
