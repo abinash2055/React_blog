@@ -5,7 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = ueState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState([]);
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
@@ -16,7 +17,10 @@ const Login = () => {
       setPassword("");
       navigate("/");
     } catch (e) {
-      console.log(e);
+      if (e.response.status == 422) {
+        // 422 ra 202 ma confuse vaye
+        setErrors(e.response.data.errors);
+      }
     }
   };
   return (
@@ -26,28 +30,40 @@ const Login = () => {
           <div className="w-full px-4">
             <div className="relative mx-auto max-w-[525px] overflow-hidden rounded-lg bg-white py-16 px-10 text-center sm:px-12 md:px-[60px]">
               <div className="mb-10 text-center md:mb-16">
-                Personal Signature
+                PERSONAL SIGNATURE
               </div>
-              <form>
+              <form onSubmit={handleLogin}>
                 <div className="mb-4">
                   <input
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
                     className="border-[#E9EDF4] w-full rounded-md border bg-[#ECFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
                   />
-                  <div className="flex">
-                    <span className="text-red-400 text-sm m-2 p-2">Error</span>
-                  </div>
+                  {errors.email && (
+                    <div className="flex">
+                      <span className="text-red-400 text-sm m-2 p-2">
+                        {errors.email[0]}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="mb-4">
                   <input
                     type="password"
                     placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="border-[#E9EDF4] w-full rounded-md boder bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
                   />
-                  <div className="flex">
-                    <span className="text-red-400 text-sm m-2 p-2">Error</span>
-                  </div>
+                  {errors.password && (
+                    <div className="flex">
+                      <span className="text-red-400 text-sm m-2 p-2">
+                        {errors.password[0]}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="mb-10">
                   <button
