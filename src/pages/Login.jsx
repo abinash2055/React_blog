@@ -1,34 +1,17 @@
-import React from "react";
 import { useState } from "react";
-import axios from "../api/axios";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
+import useAuthContext from "../contexts/AuthContext";
 
-const Register = () => {
-  const [name, setName] = useState("");
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [password_confirmation, setPasswordConfirmation] = useState("");
-  const navigate = useNavigate();
+  const { login, errors } = useAuthContext();
 
-  const handleRegister = async (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
-    try {
-      await axios.post("/register", {
-        name,
-        email,
-        password,
-        password_confirmation,
-      });
-      setEmail("");
-      setPassword("");
-      setName("");
-      setPasswordConfirmation("");
-      navigate("/");
-    } catch (e) {
-      console.log(e);
-    }
+    login({ email, password });
   };
-
   return (
     <section className="bg-[#F4F7FF] py-20 lg-:py-[120px]">
       <div className="container mx-auto">
@@ -38,19 +21,7 @@ const Register = () => {
               <div className="mb-10 text-center md:mb-16">
                 PERSONAL SIGNATURE
               </div>
-              <form onSubmit={handleRegister}>
-                <div className="mb-4">
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Name"
-                    className="border-[#E9EDF4] w-full rounded-md border bg-[#ECFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
-                  />
-                  <div className="flex">
-                    <span className="text-red-400 text-sm m-2 p-2">Error</span>
-                  </div>
-                </div>
+              <form onSubmit={handleLogin}>
                 <div className="mb-4">
                   <input
                     type="email"
@@ -59,40 +30,36 @@ const Register = () => {
                     placeholder="Email"
                     className="border-[#E9EDF4] w-full rounded-md border bg-[#ECFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
                   />
-                  <div className="flex">
-                    <span className="text-red-400 text-sm m-2 p-2">Error</span>
-                  </div>
+                  {errors.email && (
+                    <div className="flex">
+                      <span className="text-red-400 text-sm m-2 p-2">
+                        {errors.email[0]}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="mb-4">
                   <input
                     type="password"
+                    placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
                     className="border-[#E9EDF4] w-full rounded-md boder bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
                   />
-                  <div className="flex">
-                    <span className="text-red-400 text-sm m-2 p-2">Error</span>
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <input
-                    type="password"
-                    value={password_confirmation}
-                    onChange={(e) => setPasswordConfirmation(e.target.value)}
-                    placeholder="Password Confirmation"
-                    className="border-[#E9EDF4] w-full rounded-md boder bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
-                  />
-                  <div className="flex">
-                    <span className="text-red-400 text-sm m-2 p-2">Error</span>
-                  </div>
+                  {errors.password && (
+                    <div className="flex">
+                      <span className="text-red-400 text-sm m-2 p-2">
+                        {errors.password[0]}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="mb-10">
                   <button
                     type="submit"
                     className="w-full px-4 py-3 bg-indigo-700 hover:bg-purple-900 rounded-md text-white"
                   >
-                    Register
+                    Login
                   </button>
                 </div>
               </form>
@@ -116,4 +83,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Login;
