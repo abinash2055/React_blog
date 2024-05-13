@@ -1,13 +1,23 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import useAuthContext from "../contexts/AuthContext";
 import axios from "../api/axios";
 
-const ForgetPassword = () => {
+const ResetPassword = () => {
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState([]);
   const [status, setStatus] = useState(null);
+  const [password, setPassword] = useState("");
+  const [password_confirmation, setPasswordConfirmation] = useState("");
+  const [searchParams] = useSearchParams();
+  const { token } = useParams();
+
   const { csrf } = useAuthContext();
+
+  useEffect(() => {
+    setEmail(searchParams.get("email"));
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,7 +25,12 @@ const ForgetPassword = () => {
     setErrors([]);
     setStatus(null);
     try {
-      const response = await axios.post("/forget-password", { email });
+      const response = await axios.post("/reset-password", {
+        email,
+        token,
+        password,
+        password_confirmation,
+      });
       setStatus(response.data.status);
     } catch (e) {
       if (e.response.status == 422) {
@@ -33,35 +48,46 @@ const ForgetPassword = () => {
               {status && (
                 <div className="bg-green-700 m-2 p-2 rounded text-white">
                   {status}
+                  <div className="m-2 p-2">
+                    Go to <Link to="/login">Login</Link>
+                  </div>
                 </div>
               )}
               <div className="mb-10 text-center md:mb-16">
-                Forgot your Password?? Let us know your email address and we
-                will email you a password reset link.
+                Forgot your Password?? Just Add your New Password here.
               </div>
               <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                   <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email"
-                    className="border-[#E9EDF4] w-full rounded-md border bg-[#ECFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password"
+                    className="border-[#E9EDF4] w-full rounded-md boder bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
                   />
-                  {errors.email && (
+                  {errors.password && (
                     <div className="flex">
                       <span className="text-red-400 text-sm m-2 p-2">
-                        {errors.email[0]}
+                        {errors.password[0]}
                       </span>
                     </div>
                   )}
+                </div>
+                <div className="mb-4">
+                  <input
+                    type="password"
+                    value={password_confirmation}
+                    onChange={(e) => setPasswordConfirmation(e.target.value)}
+                    placeholder="Password Confirmation"
+                    className="border-[#E9EDF4] w-full rounded-md boder bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
+                  />
                 </div>
                 <div className="mb-10">
                   <button
                     type="submit"
                     className="w-full px-4 py-3 bg-indigo-700 hover:bg-purple-900 rounded-md text-white"
                   >
-                    Submit
+                    Reset Password
                   </button>
                 </div>
               </form>
@@ -72,4 +98,4 @@ const ForgetPassword = () => {
     </section>
   );
 };
-export default ForgetPassword;
+export default ResetPassword;
