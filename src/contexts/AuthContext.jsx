@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
 
   const getUser = async () => {
     try {
-      const { data } = await axios.get("./api/user");
+      const { data } = await axios.get("./api/user"); /// video 7 ko timestamp 5:45
       setUser(data);
     } catch (error) {
       console.log(error.response.data.errors);
