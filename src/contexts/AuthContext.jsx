@@ -11,12 +11,17 @@ export const AuthProvider = ({ children }) => {
   const [errors, setErrors] = useState([]);
   const navigate = useNavigate();
 
-  const csrf = () => axios.get("/sanctum/csrf-cookie");
+  const csrf = async () => {
+    await axios.get("/sanctum/csrf-cookie");
+  };
 
-  // register ya login garda home pafe ma naam aayena
   const getUser = async () => {
-    const { data } = await axios.get("/api/user");
-    setUser(data);
+    try {
+      const { data } = await axios.get("./api/user");
+      setUser(data);
+    } catch (error) {
+      console.log(error.response.data.errors);
+    }
   };
 
   const login = async ({ ...data }) => {
@@ -27,8 +32,10 @@ export const AuthProvider = ({ children }) => {
       await getUser();
       navigate("/");
     } catch (e) {
-      if (e.response.status == 422) {
+      if (e.response && e.response.status == 422) {
         setErrors(e.response.data.errors);
+      } else {
+        console.error("Login Eroor:", e);
       }
     }
   };
@@ -40,16 +47,21 @@ export const AuthProvider = ({ children }) => {
       await getUser();
       navigate("/");
     } catch (e) {
-      if (e.response.status == 422) {
+      if (e.response && e.response.status == 422) {
         setErrors(e.response.data.errors);
+      } else {
+        console.error("Registration Error:", e);
       }
     }
   };
 
-  const logout = () => {
-    axios.post("/logout").then(() => {
+  const logout = async () => {
+    try {
+      await axios.post("/logout");
       setUser(null);
-    });
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   useEffect(() => {
